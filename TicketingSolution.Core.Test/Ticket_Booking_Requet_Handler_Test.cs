@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicketingSolution.Core.Model;
 using Xunit;
 
 namespace TicketingSolution.Core
@@ -13,7 +14,7 @@ namespace TicketingSolution.Core
         [Fact]
         public void Should_Return_Ticket_Booking_Response_With_Request_Values()
         {
-            //Arenge
+            //Arrange
             var BookingRequest = new TicketBookingRequest
             {
                 Name = "Test Name",
