@@ -10,6 +10,10 @@ namespace TicketingSolution.Core.Handler
 
         public ServiceBookingResult BookServece(TicketBookingRequest bookingRequest)
         {
+            if (bookingRequest is null)
+            {
+                throw new ArgumentNullException(nameof(bookingRequest));
+            }
             var result = new ServiceBookingResult()
             {
                 Name = bookingRequest.Name,
