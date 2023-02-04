@@ -1,4 +1,5 @@
 ﻿using TicketingSolution.Core.Enums;
+using TicketingSolution.Domain;
 
 namespace TicketingSolution.Core.Model
 {

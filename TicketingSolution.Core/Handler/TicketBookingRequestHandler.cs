@@ -1,7 +1,7 @@
 ﻿using TicketingSolution.Core.DataService;
-using TicketingSolution.Core.Domain;
 using TicketingSolution.Core.Enums;
 using TicketingSolution.Core.Model;
+using TicketingSolution.Domain;
 
 namespace TicketingSolution.Core.Handler
 {
