@@ -1,9 +1,12 @@
-﻿using Shouldly;
+﻿using Moq;
+using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicketingSolution.Core.DataService;
+using TicketingSolution.Core.Domain;
 using TicketingSolution.Core.Handler;
 using TicketingSolution.Core.Model;
 using Xunit;
@@ -13,36 +16,41 @@ namespace TicketingSolution.Core
     public class Ticket_Booking_Requet_Handler_Test
     {
         private readonly TicketBookingRequestHandler _handler;
+        private readonly TicketBookingRequest _request;
+        private readonly Mock<ITicketBookingService> _ticketBookingServiceMock;
+
         public Ticket_Booking_Requet_Handler_Test()
         {
-            _handler = new TicketBookingRequestHandler();
-        }
-
-        [Fact]
-        public void Should_Return_Ticket_Booking_Response_With_Request_Values()
-        {
             //Arrange
-            var BookingRequest = new TicketBookingRequest
+            _request = new TicketBookingRequest
             {
                 Name = "Test Name",
                 Family = "Test Family",
                 Email = "TestEmail"
             };
 
+            _ticketBookingServiceMock = new Mock<ITicketBookingService>();
+
+            _handler = new TicketBookingRequestHandler(_ticketBookingServiceMock.Object);
+        }
+
+        [Fact]
+        public void Should_Return_Ticket_Booking_Response_With_Request_Values()
+        {
             //Act
-            ServiceBookingResult Result = _handler.BookServece(BookingRequest);
+            ServiceBookingResult Result = _handler.BookServece(_request);
 
             //Assert
             Assert.NotNull(Result);
-            Assert.Equal(BookingRequest.Name, Result.Name);
-            Assert.Equal(BookingRequest.Family, Result.Family);
-            Assert.Equal(BookingRequest.Email, Result.Email);
+            Assert.Equal(_request.Name, Result.Name);
+            Assert.Equal(_request.Family, Result.Family);
+            Assert.Equal(_request.Email, Result.Email);
 
             //Assert by shouldy
             Result.ShouldNotBeNull();
-            BookingRequest.Name.ShouldBe(Result.Name);
-            BookingRequest.Family.ShouldBe(Result.Family);
-            BookingRequest.Email.ShouldBe(Result.Email);
+            _request.Name.ShouldBe(Result.Name);
+            _request.Family.ShouldBe(Result.Family);
+            _request.Email.ShouldBe(Result.Email);
         }
 
         [Fact]
@@ -51,6 +59,25 @@ namespace TicketingSolution.Core
             var exception = Assert.Throws<ArgumentNullException>(() => _handler.BookServece(null));
 
             Assert.Equal("bookingRequest", exception.ParamName);
+        }
+
+        [Fact]
+        public void Should_Save_Ticket_Booking_Request()
+        {
+            TicketBooking SavedBooking = null;
+            _ticketBookingServiceMock.Setup(x => x.Save(It.IsAny<TicketBooking>()))
+                .Callback<TicketBooking>(booking =>
+                {
+                    SavedBooking = booking;
+                });
+            _handler.BookServece(_request);
+
+            _ticketBookingServiceMock.Verify(x => x.Save(It.IsAny<TicketBooking>()), Times.Once);
+
+            Assert.NotNull(SavedBooking);
+            Assert.Equal(_request.Name, SavedBooking.Name);
+            Assert.Equal(_request.Family, SavedBooking.Family);
+            Assert.Equal(_request.Email, SavedBooking.Email);
         }
     }
 }
