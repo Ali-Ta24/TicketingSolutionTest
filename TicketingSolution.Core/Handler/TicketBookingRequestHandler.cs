@@ -1,5 +1,6 @@
 ﻿using TicketingSolution.Core.DataService;
 using TicketingSolution.Core.Domain;
+using TicketingSolution.Core.Enums;
 using TicketingSolution.Core.Model;
 
 namespace TicketingSolution.Core.Handler
@@ -20,15 +21,19 @@ namespace TicketingSolution.Core.Handler
                 throw new ArgumentNullException(nameof(bookingRequest));
             }
             var availableTickets = _ticketBookingService.GetAvailableTickets(bookingRequest.Date);
-            
+            var result = CreateTicketBookingObject<ServiceBookingResult>(bookingRequest);
             if (availableTickets.Any())
             {
                 var Ticket = CreateTicketBookingObject<TicketBooking>(bookingRequest);
                 Ticket.TicketID = availableTickets.First().Id;
                 _ticketBookingService.Save(Ticket);
+                result.Flag = BookingResultFlag.Success;
             }
-
-            return CreateTicketBookingObject<ServiceBookingResult>(bookingRequest);
+            else
+            {
+                result.Flag = BookingResultFlag.Failure;
+            }
+            return result;
         }
 
         private static TTicketBooking CreateTicketBookingObject<TTicketBooking>(TicketBookingRequest bookingRequest) where TTicketBooking
