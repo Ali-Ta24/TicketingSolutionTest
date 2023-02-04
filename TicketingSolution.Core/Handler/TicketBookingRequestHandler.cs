@@ -28,6 +28,7 @@ namespace TicketingSolution.Core.Handler
                 Ticket.TicketID = availableTickets.First().Id;
                 _ticketBookingService.Save(Ticket);
                 result.Flag = BookingResultFlag.Success;
+                result.TicketBookingId = availableTickets.First().Id;
             }
             else
             {
