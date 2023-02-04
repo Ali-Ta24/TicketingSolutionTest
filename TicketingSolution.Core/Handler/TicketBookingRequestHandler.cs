@@ -23,7 +23,9 @@ namespace TicketingSolution.Core.Handler
             
             if (availableTickets.Any())
             {
-                _ticketBookingService.Save(CreateTicketBookingObject<TicketBooking>(bookingRequest));
+                var Ticket = CreateTicketBookingObject<TicketBooking>(bookingRequest);
+                Ticket.TicketID = availableTickets.First().Id;
+                _ticketBookingService.Save(Ticket);
             }
 
             return CreateTicketBookingObject<ServiceBookingResult>(bookingRequest);

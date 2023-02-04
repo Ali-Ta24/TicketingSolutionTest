@@ -26,7 +26,7 @@ namespace TicketingSolution.Core
                 Date = DateTime.Now,
             };
 
-            _availableTickets = new List<Ticket>() { new Ticket() };
+            _availableTickets = new List<Ticket>() { new Ticket() { Id = 1 } };
             _ticketBookingServiceMock = new Mock<ITicketBookingService>();
             _ticketBookingServiceMock.Setup(q => q.GetAvailableTickets(_request.Date))
                 .Returns(_availableTickets);
@@ -80,6 +80,7 @@ namespace TicketingSolution.Core
             Assert.Equal(_request.Name, SavedBooking.Name);
             Assert.Equal(_request.Family, SavedBooking.Family);
             Assert.Equal(_request.Email, SavedBooking.Email);
+            Assert.Equal(_availableTickets.First().Id, SavedBooking.TicketID);
         }
 
         [Fact]
